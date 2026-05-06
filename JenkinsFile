@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = "USERNAME_DOCKER_KAMU"
-        GIT_REPO_URL = "URL_GITHUB_KAMU.git"
+        DOCKER_USER = "shakilaaulia245"
+        GIT_REPO_URL = "https://github.com/shakilaaulia/tp2-cloud.git"
     }
 
     stages {
