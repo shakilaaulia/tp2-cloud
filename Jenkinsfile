@@ -32,7 +32,6 @@ pipeline {
         }
     }
 }
-<<<<<<< HEAD:JenkinsFile
 
         stage('Deploy to AKS') {
     steps {
@@ -48,5 +47,3 @@ pipeline {
 }
     }
 }
-=======
->>>>>>> 93560f3878b95968eebb581a019642375457e326:Jenkinsfile
