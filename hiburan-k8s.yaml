@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend-api
-        image: USERNAME_DOCKER/hiburan-backend:latest
+        image: shakilaaulia245/hiburan-backend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -54,7 +54,7 @@ spec:
     spec:
       containers:
       - name: frontend-ui
-        image: USERNAME_DOCKER/hiburan-frontend:latest
+        image: shakilaaulia245/hiburan-frontend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
