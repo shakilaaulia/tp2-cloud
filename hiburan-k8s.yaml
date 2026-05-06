@@ -1,3 +1,4 @@
+# 1. DEPLOYMENT BACKEND
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,30 +14,28 @@ spec:
         app: backend-hiburan
     spec:
       containers:
-      - name: backend-api
+      - name: backend
         image: shakilaaulia245/hiburan-backend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
         env:
         - name: NAMA_PRAKTIKAN
-          value: "Shakila Aulia"
+          value: "Shakila Aulia" # GANTI NAMA KAMU
         - name: NIM_PRAKTIKAN
-          value: "2403086"
-
+          value: "2403086"      # GANTI NIM KAMU
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-hiburan-service
+  name: backend-service
 spec:
+  type: ClusterIP
+  ports:
+  - port: 5000
+    targetPort: 5000
   selector:
     app: backend-hiburan
-  ports:
-    - port: 5000
-      targetPort: 5000
-  type: ClusterIP
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -53,21 +52,46 @@ spec:
         app: frontend-hiburan
     spec:
       containers:
-      - name: frontend-ui
+      - name: frontend
         image: shakilaaulia245/hiburan-frontend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-hiburan-service
+  name: frontend-service
 spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
   selector:
     app: frontend-hiburan
-  ports:
-    - port: 80
-      targetPort: 80
-  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hiburan-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /api/?(.*) 
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 5000
+      - path: /?(.*) 
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
