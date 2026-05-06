@@ -2,11 +2,12 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = "shakilaaulia245"
-        GIT_REPO_URL = "https://github.com/shakilaaulia/tp2-cloud.git"
+        DOCKER_USER = "USERNAME_DOCKER_KAMU"
+        GIT_REPO_URL = "URL_GITHUB_KAMU.git"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 git branch: 'main', url: "${GIT_REPO_URL}"
@@ -17,29 +18,30 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-login',
-                    passwordVariable: 'PASS',
-                    usernameVariable: 'USER'
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
                 )]) {
 
-                    sh "docker build -t ${USER}/kantin-backend:latest ./backend"
-                    sh "docker build -t ${USER}/kantin-frontend:latest ./frontend"
+                    sh "docker build -t ${USER}/hiburan-backend:latest ./backend"
+                    sh "docker build -t ${USER}/hiburan-frontend:latest ./frontend"
 
                     sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
 
-                    sh "docker push ${USER}/kantin-backend:latest"
-                    sh "docker push ${USER}/kantin-frontend:latest"
+                    sh "docker push ${USER}/hiburan-backend:latest"
+                    sh "docker push ${USER}/hiburan-frontend:latest"
                 }
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to AKS') {
             steps {
                 withKubeConfig([credentialsId: 'aks-config']) {
-                    sh "kubectl apply -f kantin-k8s.yaml"
-                    sh "kubectl apply -f kantin-ingress.yaml"
 
-                    sh "kubectl rollout restart deployment backend-kantin"
-                    sh "kubectl rollout restart deployment frontend-kantin"
+                    sh "kubectl apply -f hiburan-k8s.yaml"
+                    sh "kubectl apply -f hiburan-ingress.yaml"
+
+                    sh "kubectl rollout restart deployment backend-hiburan"
+                    sh "kubectl rollout restart deployment frontend-hiburan"
                 }
             }
         }
