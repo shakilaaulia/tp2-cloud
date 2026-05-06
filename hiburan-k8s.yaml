@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-hiburan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-hiburan
+  template:
+    metadata:
+      labels:
+        app: backend-hiburan
+    spec:
+      containers:
+      - name: backend-api
+        image: USERNAME_DOCKER/hiburan-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        env:
+        - name: NAMA_PRAKTIKAN
+          value: "Nama Kamu"
+        - name: NIM_PRAKTIKAN
+          value: "NIM Kamu"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-hiburan-service
+spec:
+  selector:
+    app: backend-hiburan
+  ports:
+    - port: 5000
+      targetPort: 5000
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-hiburan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-hiburan
+  template:
+    metadata:
+      labels:
+        app: frontend-hiburan
+    spec:
+      containers:
+      - name: frontend-ui
+        image: USERNAME_DOCKER/hiburan-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-hiburan-service
+spec:
+  selector:
+    app: frontend-hiburan
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
