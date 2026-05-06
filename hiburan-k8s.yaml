@@ -20,9 +20,9 @@ spec:
         - containerPort: 5000
         env:
         - name: NAMA_PRAKTIKAN
-          value: "Nama Kamu"
+          value: "Shakila Aulia"
         - name: NIM_PRAKTIKAN
-          value: "NIM Kamu"
+          value: "2403086"
 
 ---
 apiVersion: v1
