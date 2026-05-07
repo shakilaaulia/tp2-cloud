@@ -1,22 +1,32 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
+
 metadata:
   name: hiburan-ingress
+
 spec:
+  ingressClassName: nginx
+
   rules:
-  - http:
-      paths:
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: backend-hiburan-service
-            port:
-              number: 5000
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend-hiburan-service
-            port:
-              number: 80
+    - http:
+        paths:
+
+          - path: /api
+            pathType: Prefix
+
+            backend:
+              service:
+                name: hiburan-backend-service
+
+                port:
+                  number: 5000
+
+          - path: /
+            pathType: Prefix
+
+            backend:
+              service:
+                name: hiburan-frontend-service
+
+                port:
+                  number: 80
