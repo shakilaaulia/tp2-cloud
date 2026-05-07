@@ -41,11 +41,10 @@ pipeline {
         stage('Deploy to AKS') {
             steps {
                 withKubeConfig([credentialsId: 'aks-config']) {
-                    // 1. Pastikan nama file sesuai: hiburan-k8s.yaml
+
                     bat 'kubectl apply -f hiburan-k8s.yaml'
                     
-                    // 2. Restart deployment agar menarik image terbaru
-                    // Nama harus match dengan 'metadata.name' di file YAML
+                    
                     bat 'kubectl rollout restart deployment backend-hiburan'
                     bat 'kubectl rollout restart deployment frontend-hiburan'
                 }
