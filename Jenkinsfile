@@ -7,7 +7,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 git branch: 'main', url: "${GIT_REPO_URL}"
@@ -18,50 +17,36 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-login',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
+                    usernameVariable: 'D_USER',
+                    passwordVariable: 'D_PASS'
                 )]) {
-
-                    bat """
-                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%
-                    """
+                    // Menggunakan --password-stdin agar lebih aman sesuai saran log docker
+                    bat "echo %D_PASS% | docker login -u %D_USER% --password-stdin"
                 }
             }
         }
 
-        stage('Build Backend') {
+        stage('Build & Push Images') {
             steps {
-                bat 'docker build -t shakilaaulia245/hiburan-backend:latest ./backend'
-            }
-        }
-
-        stage('Build Frontend') {
-            steps {
-                bat 'docker build -t shakilaaulia245/hiburan-frontend:latest ./frontend'
-            }
-        }
-
-        stage('Push Backend') {
-            steps {
-                bat 'docker push shakilaaulia245/hiburan-backend:latest'
-            }
-        }
-
-        stage('Push Frontend') {
-            steps {
-                bat 'docker push shakilaaulia245/hiburan-frontend:latest'
+                bat """
+                docker build -t %DOCKER_USER%/hiburan-backend:latest ./backend
+                docker build -t %DOCKER_USER%/hiburan-frontend:latest ./frontend
+                docker push %DOCKER_USER%/hiburan-backend:latest
+                docker push %DOCKER_USER%/hiburan-frontend:latest
+                """
             }
         }
 
         stage('Deploy to AKS') {
             steps {
                 withKubeConfig([credentialsId: 'aks-config']) {
-
-                    bat 'kubectl apply -f k8s.yaml'
-                    bat 'kubectl apply -f ingress.yaml'
-
-                    bat 'kubectl rollout restart deployment hiburan-backend'
-                    bat 'kubectl rollout restart deployment hiburan-frontend'
+                    // 1. Pastikan nama file sesuai: hiburan-k8s.yaml
+                    bat 'kubectl apply -f hiburan-k8s.yaml'
+                    
+                    // 2. Restart deployment agar menarik image terbaru
+                    // Nama harus match dengan 'metadata.name' di file YAML
+                    bat 'kubectl rollout restart deployment backend-hiburan'
+                    bat 'kubectl rollout restart deployment frontend-hiburan'
                 }
             }
         }
