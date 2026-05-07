@@ -21,7 +21,7 @@ pipeline {
                     passwordVariable: 'D_PASS'
                 )]) {
                     // Menggunakan --password-stdin agar lebih aman sesuai saran log docker
-                    bat "echo %D_PASS% | docker login -u %D_USER% --password-stdin"
+                    bat "echo \"%D_PASS%\" | docker login -u %D_USER% --password-stdin"
                 }
             }
         }
