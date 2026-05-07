@@ -16,7 +16,7 @@ pipeline {
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-login',
+                    credentialsId: 'docker-baru',
                     usernameVariable: 'D_USER',
                     passwordVariable: 'D_PASS'
                 )]) {
